@@ -1,0 +1,7 @@
+---
+db_host: "{{ groups['server'][0] }}"
+db_port:
+db_user:
+db_password:
+db_name:
+backup_file:

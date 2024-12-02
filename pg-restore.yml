@@ -1,0 +1,54 @@
+---
+- name: Restore RDB
+  hosts: server
+  become: yes
+
+  vars_files:
+    - vars.yml
+  
+  tasks:
+    - name: Update and install some packages
+      apt:
+        name:
+          - apt-transport-https
+          - curl
+          - python3-pip
+          - build-essential
+        update_cache: yes
+
+    - name: Make sure psycopg2-binary is present
+      pip:
+        name:
+          - psycopg2-binary
+        state: present
+
+    - name: Create a backup directory
+      file:
+        path: "/tmp/pg-backup"
+        mode: 0777
+        state: directory
+
+    - name: Copy backup to the server
+      copy: 
+        src: "./{{ backup_file }}"
+        dest: "/tmp/pg-backup"
+        mode: 0777
+
+    - name: Create database
+      postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_host: "{{ db_host }}"
+        login_port: "{{ db_port }}"
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+
+    - name: Restore PostgreSQL on target host
+      postgresql_db: 
+        name: "{{ db_name }}"
+        state: restore
+        target: "/tmp/pg-backup/{{ backup_file }}"
+        login_host: "{{ db_host }}"
+        login_port: "{{ db_port }}"
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
