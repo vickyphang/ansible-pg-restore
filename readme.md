@@ -18,11 +18,8 @@ This Ansible playbook is designed to simplify the process of restoring a Postgre
     # Install apt packages
     apt install ansible python3-pip python3-dev  postgresql-client-common postgresql-client -y
 
-    # Install pymysql
-    pip3 install pymysql s4cmd
-
     # Install ansible collections
-    ansible-galaxy collection install community.mysql community.postgresql
+    ansible-galaxy collection install community.postgresql
     ```
 3. Configure the Playbook
     - Edit the `vars.yml` file to specify the following:
